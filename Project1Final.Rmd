@@ -72,7 +72,7 @@ The proportion of church hospitals with a five-star rating is is `r 100*(round(m
 
 #Using Type of Facility variable
 hospitals.2_ggplot + 
-  geom_bar(aes(x=Rating.Overall), fill='#78b3d0') +
+  geom_bar(aes(x=Rating.Overall), fill='#AA336A') +
   xlab('Rating Overall') +
   ggtitle('Distribution of Overall Rating for Hospitals with Different Facility Types') + 
   theme(plot.title = element_text(hjust = 0.5)) +
