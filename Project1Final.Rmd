@@ -101,7 +101,7 @@ Overall, hospitals with a timeliness rating the same as the national hospital ti
 
 #Using Timeliness Rating
 hospitals.3_ggplot + 
-  geom_bar(aes(x=Rating.Overall), width=0.5, fill='#78b3d0') + 
+  geom_bar(aes(x=Rating.Overall), width=0.5, fill='#AA336A') + 
   xlab("Rating Overall") + 
   ggtitle("Distribution of Overall Rating for Hospitals with Different Timeliness Ratings") +
   theme(plot.title = element_text(hjust = 0.5)) +
