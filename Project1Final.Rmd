@@ -1,0 +1,163 @@
+---
+title: "Project 1"
+author: "Chloe Beaudreau"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE}
+hospitals <- read.csv('project1_hospitals.csv')
+
+#Creating a subset that removes missing values for all three predictor variables
+hospitals.1 = hospitals[hospitals$Rating.Overall != "-1",]
+```
+
+## **Dataset Introduction**
+
+I am analyzing a hospital dataset that includes the costs for different procedures and ratings for US hospital (1). The dataset contains the city, state, and facility type for every hospital as well as the cost, quality, and value of various procedures such as heart attack, heart failure, pneumonia, and hip knee procedures. 
+
+Additionally, the dataset includes an overall rating for each hospital (from 1 to 5 stars, with 5 being the highest) and ratings for safety, readmission, experience, mortality, effectiveness, timeliness, and imaging (reported as below, same as, or above the national hospital rating for that factor).
+
+This data was published in 2019 and collected from the CORGIS Dataset Project (2) with the goal of allowing consumers to directly compare performance measure information across hospitals. This was part of an Administration-wide effort to increase the availability and accessibility of information on quality, utilization, and costs for effective, informed decision-making (3).
+
+My chosen outcome variable is the Overall Rating, and specifically, I’ll be focusing on five star ratings. I made a subset that excludes all hospitals where there is no overall rating (represented by -1). The first predictor variable I will be investigating is Facility Type, which is the kind of organization operating the hospital (Government, Private, Proprietary, Church). The second and third predictor variables I’ll be investigating are the Timeliness and Safety ratings (recorded as above, same, or below the national timeliness for safety or care, respectively). For each predictor variable, I will remove all the “unknown” entries in the data prior to investigating. 
+
+![Vonderhaar, Jordan. (Aug. 3, 2021). Emergency Room at Goodall-Witcher Hospital in Clifton [Photograph]. The Texas Tribune. https://www.texastribune.org/2021/08/10/coronavirus-texas-hospitals-icu-beds/](hospital.jpeg)
+
+## **Distribution of Overall Rating**
+
+```{r echo=FALSE}
+
+library(ggplot2)
+hospitals.1_ggplot <- ggplot(hospitals.1)
+
+table <- table(hospitals.1$Rating.Overall)
+mytable <- prop.table(table)
+
+```
+
+Overall, `r 100*(round(mytable[5],4))`% of hospitals in this dataset have a five-star rating, `r 100*(round(mytable[4],4))`% have a four-star rating, `r 100*(round(mytable[3],4))`% have a three-star rating, `r 100*(round(mytable[2],4))`% have a two-star rating, and `r 100*(round(mytable[1],4))`% have a one-star rating. Middle ratings of 2, 3, and 4 stars are the most common whereas one-star and five-star ratings are the least common.
+
+```{r echo=FALSE}
+
+hospitals.1_ggplot + 
+  geom_bar(aes(x=Rating.Overall), fill='#78b3d0') +
+  xlab('Overall Rating') +
+  ggtitle('Distribution of Overall Rating for Hospitals in the US') + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+## **Facility Type Predictor Variable**
+```{r echo=FALSE}
+
+#Make another subset to remove "unknown"
+hospitals.2 = hospitals.1[hospitals.1$Facility.Type != "Unknown",]
+hospitals.2_ggplot <- ggplot(hospitals.2)
+
+table1 <- table(hospitals.2$Rating.Overall, hospitals.2$Facility.Type)
+mytable1 <- prop.table(table1)
+
+```
+
+The proportion of church hospitals with a five-star rating is is `r 100*(round(mytable1[5,1],4))`%, the proportion of government hospitals with a five-star rating is is `r 100*(round(mytable1[5,2],4))`%, the proportion of private hospitals with a five-star rating is is `r 100*(round(mytable1[5,3],4))`%, and the proportion of proprietary hospitals with a five-star rating is is `r 100*(round(mytable1[5,4],4))`%. Overall, private hospitals have the highest proportion of five-star ratings and government hospitals have the lowest.
+
+```{r echo=FALSE}
+
+#Using Type of Facility variable
+hospitals.2_ggplot + 
+  geom_bar(aes(x=Rating.Overall), fill='#78b3d0') +
+  xlab('Rating Overall') +
+  ggtitle('Distribution of Overall Rating for Hospitals with Different Facility Types') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  facet_wrap(~ Facility.Type)
+
+```
+
+## **Timeliness Rating Predictor Variable**
+
+```{r echo=FALSE}
+
+#Make another subset to remove "none"
+hospitals.3 = hospitals.1[hospitals.1$Rating.Timeliness != "None",]
+hospitals.3_ggplot <- ggplot(hospitals.3)
+
+table2 <- table(hospitals.3$Rating.Overall, hospitals.3$Rating.Timeliness)
+mytable2 <- prop.table(table2)
+
+```
+
+The proportion of hospitals with a timeliness rating the same as the national hospital timeliness of care with an overall five-star rating is `r 100*(round(mytable2[5,3],4))`%. The proportion of hospitals with a timeliness rating below the national hospital timeliness of care with an overall five-star rating is `r 100*(round(mytable2[5,2],4))`%. Lastly, the proportion of hospitals with a timeliness rating above the national hospital timeliness of care with an overall five-star rating is `r 100*(round(mytable2[5,1],4))`%. 
+
+Overall, hospitals with a timeliness rating the same as the national hospital timeliness of care have the highest proportion of five-star ratings while hospitals with a timeliness rating below the national hospital timeliness of care have the lowest proportion of five-star ratings. 
+
+```{r echo=FALSE}
+
+#Using Timeliness Rating
+hospitals.3_ggplot + 
+  geom_bar(aes(x=Rating.Overall), width=0.5, fill='#78b3d0') + 
+  xlab("Rating Overall") + 
+  ggtitle("Distribution of Overall Rating for Hospitals with Different Timeliness Ratings") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  facet_wrap(~ Rating.Timeliness)
+
+```
+
+## **Safety Rating Predictor Variable**
+
+```{r echo=FALSE}
+
+#Make another subset to remove "none"
+hospitals.4 = hospitals.1[hospitals.1$Rating.Safety != "None",]
+hospitals.4_ggplot <- ggplot(hospitals.4)
+
+table3 <- table(hospitals.4$Rating.Overall, hospitals.4$Rating.Safety)
+mytable3 <- prop.table(table3)
+
+```
+
+The proportion of hospitals with a safety rating the same as national hospital safety with an overall five-star rating is `r 100*(round(mytable3[5,3],4))`%. The proportion of hospitals with a safety rating below national hospital safety with an overall five-star rating is `r 100*(round(mytable3[5,2],4))`%. Lastly, the proportion of hospitals with a safety rating above national hospital safety with an overall five-star rating is `r 100*(round(mytable3[5,1],4))`%. 
+
+Overall, hospitals with a safety rating above national hospital safety have the highest proportion of five-star ratings significantly while hospitals with a safety rating below national hospital safety have the lowest proportion of five-star ratings. 
+
+
+```{r echo=FALSE}
+
+#Make another subset to remove "none" from subset 1 (trying to keep as much data possible)
+hospitals.4 = hospitals.1[hospitals.1$Rating.Safety != "None",]
+hospitals.4_ggplot <- ggplot(hospitals.4)
+
+#Using Safety Rating
+hospitals.4_ggplot + 
+  geom_bar(aes(x=Rating.Overall), width=0.5, fill='#78b3d0') + 
+  xlab("Rating Overall") + 
+  ggtitle("Distribution of Overall Rating for Hospitals with Different Safety Ratings") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  facet_wrap(~ Rating.Safety)
+
+```
+
+## **Conclusion**
+
+In conclusion, private hospitals had a significantly higher proportion of five-star ratings than hospitals owned by different facilities. This could be explained by several different reasons. For example, private hospitals may have higher ratings because they have more funding or attract better employees. 
+
+Additionally, hospitals with a safety rating above national hospital safety had a significantly higher proportion of five-star ratings than hospitals with below average or average safety rankings. This is what I expected, since it makes sense that people heavily value safety when going to the hospital and undergoing potentially dangerous procedures.
+
+Lastly, hospitals with a timeliness of care below the national average had the lowest proportion of five-star ratings while hospitals with a timeliness of care above the national average had the second lowest proportion of five-star ratings. This makes sense because if a hospital operates slower than what is typical it might upset patients, whereas if a hospital operates much faster than usual it might make patients feel rushed or create more room for error. 
+
+A suggestion I have for future research is also collecting data specifically on cleanliness of the facility and also the kindness of employees, since it would be interesting to see how these factors impact the overall rating for hospitals. 
+
+## **Sources**
+
+(1) Kafura, Dennis. “Hospitals CSV File.” CORGIS Datasets Project, June 2019, https://think.cs.vt.edu/corgis/csv/hospitals/. 
+
+(2) Austin Cory Bart, Dennis Kafura, Clifford A. Shaffer, Javier Tibau, Luke Gusukuma, Eli Tilevich. "CORGIS." Github, 2022, https://corgis-edu.github.io/corgis/. 
+
+(3) CMS Government Website. https://data.cms.gov/provider-data/?redirect=true
+
